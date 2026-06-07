@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>quanquan 互动机械臂原型计划</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2433;
+      --muted: #5f6b7a;
+      --line: #d7dce3;
+      --paper: #ffffff;
+      --wash: #f6f7f9;
+      --head: #edf0f3;
+      --dark: #2b313a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    header {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin: 18px 0 8px;
+    }
+
+    p {
+      margin: 10px 0 0;
+    }
+
+    code {
+      background: #eef2ff;
+      color: #263b88;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95em;
+    }
+
+    .section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .tile {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fafafa;
+    }
+
+    .tile strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 15px;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 12px;
+      vertical-align: top;
+      text-align: left;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    th {
+      background: var(--head);
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+
+    .phase {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 18px;
+      background: #fff;
+    }
+
+    .phase-head {
+      padding: 16px 18px;
+      color: #fff;
+    }
+
+    .phase-head.one {
+      background: var(--dark);
+    }
+
+    .phase-head.two {
+      background: var(--dark);
+    }
+
+    .phase-head.three {
+      background: var(--dark);
+    }
+
+    .phase-body {
+      padding: 18px;
+    }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 12px 0 0;
+      padding: 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .steps li:first-child {
+      border-top: 0;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e7eaee;
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .command-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+    }
+
+    .file-map {
+      display: grid;
+      grid-template-columns: 210px 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      margin-top: 14px;
+    }
+
+    .file-map div {
+      padding: 12px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      overflow-wrap: anywhere;
+    }
+
+    .file-map div:nth-child(3n) {
+      border-right: 0;
+    }
+
+    .file-map .head {
+      background: var(--head);
+      font-weight: 700;
+    }
+
+    .file-map div:nth-last-child(-n+3) {
+      border-bottom: 0;
+    }
+
+    @media (max-width: 820px) {
+      main {
+        width: min(100% - 20px, 1120px);
+        padding-top: 16px;
+      }
+
+      header,
+      .section,
+      .phase-body {
+        padding: 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        table-layout: auto;
+      }
+
+      .file-map {
+        grid-template-columns: 1fr;
+      }
+
+      .file-map div,
+      .file-map div:nth-child(3n),
+      .file-map div:nth-last-child(-n+3) {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>quanquan 互动机械臂原型计划</h1>
+    </header>
+
+    <section class="section">
+      <h2>硬件输入</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>项目</th>
+            <th>当前信息</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>机械结构</td>
+            <td>RRR 型机械臂，三个转动关节</td>
+          </tr>
+          <tr>
+            <td>自由度</td>
+            <td>三个关节自由度，末端执行器不主动旋转</td>
+          </tr>
+          <tr>
+            <td>末端目标</td>
+            <td>末端做平动交互动作，第一阶段优先做动作姿态，不优先做精确抓取</td>
+          </tr>
+          <tr>
+            <td>主控</td>
+            <td>Arduino Mega 2560</td>
+          </tr>
+          <tr>
+            <td>扩展板</td>
+            <td>RAMPS 1.5</td>
+          </tr>
+          <tr>
+            <td>电机</td>
+            <td>三个步进电机，接在 RAMPS 的 X、Y、Z 三轴</td>
+          </tr>
+          <tr>
+            <td>步进驱动</td>
+            <td>TMC2209</td>
+          </tr>
+          <tr>
+            <td>微步跳线</td>
+            <td>RAMPS 板上 X、Y、Z 三组细分跳线都已插上</td>
+          </tr>
+          <tr>
+            <td>关节对应</td>
+            <td>X/Y/Z 对应底座旋转、大臂、小臂；具体映射以现有固件为准</td>
+          </tr>
+          <tr>
+            <td>回零</td>
+            <td>XYZ 三轴有回零开关，开机会回零</td>
+          </tr>
+          <tr>
+            <td>下位机固件</td>
+            <td>已有机器人固件，正运动学、逆运动学、传动比、零位、限位由固件处理</td>
+          </tr>
+          <tr>
+            <td>上位机边界</td>
+            <td>不改 Arduino 固件，不计算运动学，只发送 G-code</td>
+          </tr>
+          <tr>
+            <td>电脑端</td>
+            <td>Windows 上位机软件</td>
+          </tr>
+          <tr>
+            <td>通信</td>
+            <td>USB 串口通信</td>
+          </tr>
+          <tr>
+            <td>串口参数</td>
+            <td>波特率按固件配置使用 115200；命令行结尾优先使用 <code>\r</code></td>
+          </tr>
+          <tr>
+            <td>G-code 坐标</td>
+            <td>上位机发送 <code>G1 X... Y... Z... F...</code>，XYZ 坐标由固件解释并执行</td>
+          </tr>
+          <tr>
+            <td>末端执行器</td>
+            <td>目前没有末端执行器</td>
+          </tr>
+          <tr>
+            <td>第一阶段目标</td>
+            <td>Windows UI 按钮触发固定 G-code 动作：握手、开心、害羞、睡觉、醒来</td>
+          </tr>
+          <tr>
+            <td>第二阶段目标</td>
+            <td>电脑麦克风听固定英文口令，电脑扬声器播放英文回应</td>
+          </tr>
+          <tr>
+            <td>第三阶段目标</td>
+            <td>USB 摄像头识别手部位置，触发靠近、握手、害羞后退</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>写代码前缺失信息</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>信息</th>
+            <th>需要你提供</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>串口号</td>
+            <td>Arduino Mega 2560 在 Windows 里的 COM 口，例如 <code>COM3</code></td>
+            <td>上位机默认连接</td>
+          </tr>
+          <tr>
+            <td>固件可用命令</td>
+            <td>用串口助手确认 <code>G28</code>、<code>G90</code>、<code>G1 X... Y... Z... F...</code>、<code>M114</code> 是否可用</td>
+            <td>决定按钮和动作脚本可发送的命令</td>
+          </tr>
+          <tr>
+            <td>换行格式</td>
+            <td>确认固件是否用 <code>\r</code> 执行命令；当前按 <code>\r</code> 设计</td>
+            <td>决定 <code>serial_link.py</code> 的发送结尾</td>
+          </tr>
+          <tr>
+            <td>固件返回文本</td>
+            <td>执行命令后串口返回的文本，例如 <code>ok</code>、<code>INFO:</code>、<code>ERROR:</code></td>
+            <td>决定日志显示和状态判断</td>
+          </tr>
+          <tr>
+            <td>可用坐标范围</td>
+            <td>用手动测试找到不会撞、不极限的 XYZ 范围</td>
+            <td>决定 UI 输入限制和动作点</td>
+          </tr>
+          <tr>
+            <td>待机坐标</td>
+            <td>quanquan 安静状态的 <code>X Y Z F</code></td>
+            <td><code>idle_breathe</code>、回到待机</td>
+          </tr>
+          <tr>
+            <td>握手坐标</td>
+            <td>伸手、接近、摇上、摇下、收回的 <code>X Y Z F</code></td>
+            <td><code>handshake</code> 动作脚本</td>
+          </tr>
+          <tr>
+            <td>表情动作坐标</td>
+            <td>开心、害羞、睡觉、醒来的 <code>X Y Z F</code></td>
+            <td>动作按钮</td>
+          </tr>
+          <tr>
+            <td>移动速度</td>
+            <td>常用 <code>F</code> 值，例如慢速、正常、快速</td>
+            <td>动作节奏</td>
+          </tr>
+          <tr>
+            <td>第一版是否要示教</td>
+            <td>是否在 UI 里加手动输入 XYZ 和保存动作点</td>
+            <td>决定是否创建 <code>poses.json</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>总览</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>阶段</th>
+            <th>新增硬件</th>
+            <th>功能</th>
+            <th>主要工具</th>
+            <th>产出物</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>阶段一：现有硬件</td>
+            <td>不新增硬件</td>
+            <td>Windows UI 发送 G-code，按钮触发握手、害羞、开心、睡觉</td>
+            <td>Python、Tkinter、pyserial</td>
+            <td>电脑端控制软件、G-code 命令层、动作脚本</td>
+          </tr>
+          <tr>
+            <td>阶段二：电脑麦克风和扬声器</td>
+            <td>不一定要新增硬件，直接用电脑麦克风和扬声器</td>
+            <td>英文固定口令、英文回应、动作触发</td>
+            <td>Python、SpeechRecognition、PyAudio、edge-tts 或 pyttsx3、Tkinter、pyserial</td>
+            <td>语音输入模块、英语回应模块、口令到动作的映射</td>
+          </tr>
+          <tr>
+            <td>阶段三：加摄像头</td>
+            <td>USB 摄像头</td>
+            <td>手部识别、靠近、握手、害羞后退</td>
+            <td>Python、OpenCV、MediaPipe、Tkinter、pyserial</td>
+            <td>手部识别模块、视觉状态判断、视觉触发动作</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>推荐文件结构</h2>
+      <div class="file-map">
+        <div class="head">文件</div>
+        <div class="head">先写什么</div>
+        <div class="head">后写什么</div>
+
+        <div><code>pc_app/app.py</code></div>
+        <div>串口选择、Connect、Home、Stop、M114、手动 XYZ、动作按钮。</div>
+        <div>接入语音开关、视觉开关、动作状态显示。</div>
+
+        <div><code>pc_app/serial_link.py</code></div>
+        <div>打开串口、关闭串口、发送一行 G-code，默认结尾 <code>\r</code>。</div>
+        <div>读取固件返回文本，写入 UI 日志。</div>
+
+        <div><code>pc_app/gcode.py</code></div>
+        <div>生成 <code>G28</code>、<code>G90</code>、<code>G1 X Y Z F</code>、<code>G4 S</code>、<code>M114</code>、<code>M119</code>、<code>M18</code>。</div>
+        <div>统一格式化数值，避免 UI 直接拼字符串。</div>
+
+        <div><code>pc_app/motion_scripts.py</code></div>
+        <div>把 <code>handshake</code>、<code>happy</code>、<code>shy</code>、<code>sleep</code> 写成 G-code 序列。</div>
+        <div>从 <code>poses.json</code> 读取可调坐标点。</div>
+
+        <div><code>pc_app/poses.json</code></div>
+        <div>保存待机、伸手、摇上、摇下、开心、害羞、睡觉坐标。</div>
+        <div>由 UI 示教功能更新。</div>
+
+        <div><code>pc_app/voice.py</code></div>
+        <div>先从电脑麦克风录音，把英文语音转成文字。</div>
+        <div>再把听到的句子交给 <code>intent.py</code>。</div>
+
+        <div><code>pc_app/intent.py</code></div>
+        <div>先写固定英文口令匹配，比如听到 <code>shake hand</code> 就返回 <code>handshake</code>。</div>
+        <div>再增加更多可爱口令，比如 <code>good boy</code>、<code>sleep</code>、<code>wake up</code>。</div>
+
+        <div><code>pc_app/speech_out.py</code></div>
+        <div>先让电脑扬声器播放英文句子，比如 <code>Okay!</code>、<code>I am here.</code>。</div>
+        <div>再把不同动作绑定不同回应，让声音和动作一起发生。</div>
+
+        <div><code>pc_app/vision.py</code></div>
+        <div>先打开摄像头，显示画面。</div>
+        <div>再接入手部识别结果，判断左、中、右、远、近。</div>
+
+        <div><code>pc_app/hand_tracker.py</code></div>
+        <div>先用 MediaPipe 找手掌关键点。</div>
+        <div>再输出简单状态：没有手、手在中间、手靠近、手离开。</div>
+
+        <div><code>pc_app/config.py</code></div>
+        <div>串口号、波特率 <code>115200</code>、命令结尾 <code>\r</code>、默认速度。</div>
+        <div>摄像头编号、语音开关、调试参数。</div>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-head one">
+        <h2>阶段一：现有硬件版</h2>
+      </div>
+      <div class="phase-body">
+        <h3>代码边界</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>部分</th>
+              <th>第一阶段处理方式</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Arduino 固件</td>
+              <td>不改</td>
+            </tr>
+            <tr>
+              <td>正运动学/逆运动学</td>
+              <td>不写，固件处理</td>
+            </tr>
+            <tr>
+              <td>步进、传动比、零位、限位</td>
+              <td>不写，固件处理</td>
+            </tr>
+            <tr>
+              <td>上位机</td>
+              <td>写 UI、串口、G-code 生成、动作脚本</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>第一阶段命令</h3>
+        <div class="command-list">
+          <span class="pill">G28</span>
+          <span class="pill">G90</span>
+          <span class="pill">G1 X100 Y80 Z40 F500</span>
+          <span class="pill">G4 S0.3</span>
+          <span class="pill">M114</span>
+          <span class="pill">M119</span>
+          <span class="pill">M18</span>
+          <span class="pill">\r</span>
+        </div>
+
+        <h3>UI 按钮</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>按钮</th>
+              <th>发送内容</th>
+              <th>文件</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Connect</td>
+              <td>打开串口</td>
+              <td><code>serial_link.py</code></td>
+            </tr>
+            <tr>
+              <td>Home</td>
+              <td><code>G28</code></td>
+              <td><code>gcode.py</code></td>
+            </tr>
+            <tr>
+              <td>Move XYZ</td>
+              <td><code>G90</code> + <code>G1 X... Y... Z... F...</code></td>
+              <td><code>gcode.py</code></td>
+            </tr>
+            <tr>
+              <td>Handshake</td>
+              <td><code>motion_scripts.handshake()</code></td>
+              <td><code>motion_scripts.py</code></td>
+            </tr>
+            <tr>
+              <td>Happy</td>
+              <td><code>motion_scripts.happy()</code></td>
+              <td><code>motion_scripts.py</code></td>
+            </tr>
+            <tr>
+              <td>Shy</td>
+              <td><code>motion_scripts.shy()</code></td>
+              <td><code>motion_scripts.py</code></td>
+            </tr>
+            <tr>
+              <td>Sleep</td>
+              <td><code>motion_scripts.sleep()</code></td>
+              <td><code>motion_scripts.py</code></td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td><code>M114</code></td>
+              <td><code>gcode.py</code></td>
+            </tr>
+            <tr>
+              <td>Motors Off</td>
+              <td><code>M18</code></td>
+              <td><code>gcode.py</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>写代码顺序</h3>
+        <ol class="steps">
+          <li>写 <code>config.py</code>，保存波特率 <code>115200</code>、命令结尾 <code>\r</code>、默认速度。</li>
+          <li>写 <code>serial_link.py</code>，打开串口，发送一行 G-code，读取返回文本。</li>
+          <li>写 <code>gcode.py</code>，统一生成 <code>G28</code>、<code>G90</code>、<code>G1</code>、<code>G4</code>、<code>M114</code>、<code>M119</code>、<code>M18</code>。</li>
+          <li>写 <code>app.py</code>，做 Connect、Home、Move XYZ、Status、Motors Off。</li>
+          <li>写 <code>poses.json</code>，先填占位坐标，后续示教替换。</li>
+          <li>写 <code>motion_scripts.py</code>，把动作变成 G-code 序列。</li>
+          <li>在 <code>app.py</code> 里加 Handshake、Happy、Shy、Sleep 按钮。</li>
+        </ol>
+
+        <h3>动作坐标</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>动作点</th>
+              <th>保存内容</th>
+              <th>用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>idle</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>待机</td>
+            </tr>
+            <tr>
+              <td><code>wake</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>醒来</td>
+            </tr>
+            <tr>
+              <td><code>hand_ready</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>伸手</td>
+            </tr>
+            <tr>
+              <td><code>shake_up</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>握手上摇</td>
+            </tr>
+            <tr>
+              <td><code>shake_down</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>握手下摇</td>
+            </tr>
+            <tr>
+              <td><code>happy_left</code> / <code>happy_right</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>开心摆动</td>
+            </tr>
+            <tr>
+              <td><code>shy_back</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>害羞后退</td>
+            </tr>
+            <tr>
+              <td><code>sleep</code></td>
+              <td><code>X Y Z F</code></td>
+              <td>睡觉</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-head two">
+        <h2>阶段二：电脑麦克风和扬声器版</h2>
+      </div>
+      <div class="phase-body">
+        <h3>固定英文口令</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>你说</th>
+              <th>quanquan 说</th>
+              <th>quanquan 做</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Quanquan, wake up.</code></td>
+              <td><code>I am here.</code></td>
+              <td><code>wake_up</code></td>
+            </tr>
+            <tr>
+              <td><code>Shake hand.</code></td>
+              <td><code>Okay, hand please.</code></td>
+              <td><code>handshake_ready</code> + <code>handshake_shake</code></td>
+            </tr>
+            <tr>
+              <td><code>Again.</code></td>
+              <td><code>Again!</code></td>
+              <td><code>handshake_shake</code></td>
+            </tr>
+            <tr>
+              <td><code>Good boy.</code></td>
+              <td><code>Hehe.</code></td>
+              <td><code>happy_wiggle</code></td>
+            </tr>
+            <tr>
+              <td><code>Be shy.</code></td>
+              <td><code>Oh no.</code></td>
+              <td><code>shy_back</code></td>
+            </tr>
+            <tr>
+              <td><code>Go to sleep.</code></td>
+              <td><code>Good night.</code></td>
+              <td><code>sleep</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>写代码顺序</h3>
+        <ol class="steps">
+          <li>写 <code>speech_out.py</code>，先让电脑能说英文。</li>
+          <li>写 <code>intent.py</code>，把固定英文句子映射成动作名。</li>
+          <li>写 <code>voice.py</code>，用电脑麦克风识别英文。</li>
+          <li>修改 <code>app.py</code>，增加 Start Voice 和 Stop Voice。</li>
+          <li>把语音识别结果、英文回应、机械臂动作连起来。</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-head three">
+        <h2>阶段三：加摄像头版</h2>
+      </div>
+      <div class="phase-body">
+        <h3>摄像头互动</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>视觉状态</th>
+              <th>quanquan 的反应</th>
+              <th>动作名</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>没有看到手</td>
+              <td>安静待机，轻轻呼吸。</td>
+              <td><code>idle_breathe</code></td>
+            </tr>
+            <tr>
+              <td>手出现在画面中间</td>
+              <td>好奇地抬起来，准备互动。</td>
+              <td><code>curious</code></td>
+            </tr>
+            <tr>
+              <td>手慢慢靠近</td>
+              <td>伸出末端，准备握手。</td>
+              <td><code>handshake_ready</code></td>
+            </tr>
+            <tr>
+              <td>手突然很近</td>
+              <td>害羞后退一下。</td>
+              <td><code>shy_back</code></td>
+            </tr>
+            <tr>
+              <td>手离开</td>
+              <td>轻轻摆一下，然后回到待机。</td>
+              <td><code>happy_wiggle</code> + <code>idle_breathe</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>写代码顺序</h3>
+        <ol class="steps">
+          <li>写 <code>vision.py</code>，先打开 USB 摄像头并显示画面。</li>
+          <li>写 <code>hand_tracker.py</code>，用 MediaPipe 找到手掌关键点。</li>
+          <li>先只输出简单状态：没有手、左边、中间、右边、靠近。</li>
+          <li>修改 <code>motion_scripts.py</code>，增加 <code>curious</code> 和视觉触发动作。</li>
+          <li>修改 <code>app.py</code>，增加 Start Camera 和 Stop Camera，把视觉状态变成动作。</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>最终组合</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>部分</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>电脑端</td>
+            <td>UI、语音、摄像头、G-code 生成、动作脚本</td>
+          </tr>
+          <tr>
+            <td>串口通信</td>
+            <td>电脑端 G-code 发送到 Arduino，命令结尾 <code>\r</code></td>
+          </tr>
+          <tr>
+            <td>Arduino 端</td>
+            <td>已有固件接收 G-code，处理运动学、回零、限位、电机控制</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

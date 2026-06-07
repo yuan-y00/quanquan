@@ -1,0 +1,65 @@
+{
+  "idle": {
+    "x": 100,
+    "y": 80,
+    "z": 40,
+    "f": 500,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "wake": {
+    "x": 100,
+    "y": 85,
+    "z": 55,
+    "f": 450,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "hand_ready": {
+    "x": 120,
+    "y": 90,
+    "z": 45,
+    "f": 450,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "shake_up": {
+    "x": 120,
+    "y": 95,
+    "z": 52,
+    "f": 420,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "shake_down": {
+    "x": 120,
+    "y": 85,
+    "z": 38,
+    "f": 420,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "happy_left": {
+    "x": 90,
+    "y": 88,
+    "z": 50,
+    "f": 500,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "happy_right": {
+    "x": 110,
+    "y": 88,
+    "z": 50,
+    "f": 500,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "shy_back": {
+    "x": 75,
+    "y": 70,
+    "z": 35,
+    "f": 450,
+    "note": "Placeholder. Replace after real robot calibration."
+  },
+  "sleep": {
+    "x": 80,
+    "y": 65,
+    "z": 25,
+    "f": 400,
+    "note": "Placeholder. Replace after real robot calibration."
+  }
+}
